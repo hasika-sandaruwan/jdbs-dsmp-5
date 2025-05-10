@@ -23,7 +23,7 @@
       <TextField fx:id="txtAddress" layoutX="340.0" layoutY="49.0" promptText="customer Address" />
       <TextField fx:id="txtSalary" layoutX="501.0" layoutY="49.0" promptText="customer salary" />
       <Separator layoutX="14.0" layoutY="126.0" prefHeight="4.0" prefWidth="635.0" />
-      <Button layoutX="474.0" layoutY="87.0" mnemonicParsing="false" onAction="#saveCustomerOnAction" prefHeight="25.0" prefWidth="175.0" text="Save Customer">
+      <Button fx:id="btnSave" layoutX="474.0" layoutY="87.0" mnemonicParsing="false" onAction="#saveCustomerOnAction" prefHeight="25.0" prefWidth="175.0" text="Save Customer">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>

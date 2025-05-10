@@ -24,6 +24,7 @@ public class CustomerFormController {
     public TableColumn colSalary;
     public TableColumn colAddress;
     public TableColumn colTools;
+    public Button btnSave;
 
     public void initialize() {
 
@@ -78,6 +79,15 @@ public class CustomerFormController {
                    }
                 }
             });
+            updateButton.setOnAction(e->{
+               txtId.setEditable(false);
+               btnSave.setText("Update Customer");
+
+               txtId.setText(customer.getId());
+               txtName.setText(customer.getName());
+               txtAddress.setText(customer.getAddress());
+               txtSalary.setText(String.valueOf(customer.getSalary()));
+            });
 
             tmObservableList.add(customer);
         }
@@ -91,25 +101,53 @@ public class CustomerFormController {
                 txtAddress.getText(),
                 Double.parseDouble(txtSalary.getText())
         );
-        try{
-            boolean isSaved = CrudUtil.execute(
-                    "INSERT INTO customer VALUES (?, ?, ?, ?)",
-                    customer.getId(),
-                    customer.getName(),
-                    customer.getAddress(),
-                    customer.getSalary()
-            );
-            if(isSaved){
-                clearFields();
-                loadAllCustomers();
-                new Alert(Alert.AlertType.INFORMATION, "Customer Saved").show();
-            }else{
-                new Alert(Alert.AlertType.WARNING, "Customer Not Saved").show();
+
+        if(btnSave.getText().equals("Save Customer")){
+            try{
+                boolean isSaved = CrudUtil.execute(
+                        "INSERT INTO customer VALUES (?, ?, ?, ?)",
+                        customer.getId(),
+                        customer.getName(),
+                        customer.getAddress(),
+                        customer.getSalary()
+                );
+                if(isSaved){
+                    clearFields();
+                    loadAllCustomers();
+                    new Alert(Alert.AlertType.INFORMATION, "Customer Saved").show();
+                }else{
+                    new Alert(Alert.AlertType.WARNING, "Customer Not Saved").show();
+                }
+            } catch (Exception e) {
+                new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+                throw new RuntimeException(e);
             }
-        } catch (Exception e) {
-            new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
-            throw new RuntimeException(e);
+        }else{
+            try{
+                boolean isUpdated = CrudUtil.execute(
+                        "UPDATE customer SET name=?, address=?, salary=? WHERE customer_id=?",
+                        customer.getName(),
+                        customer.getAddress(),
+                        customer.getSalary(),
+                        customer.getId()
+                );
+                if(isUpdated){
+                    clearFields();
+                    loadAllCustomers();
+                    btnSave.setText("Save Customer");
+                    txtId.setEditable(true);
+
+                    new Alert(Alert.AlertType.INFORMATION, "Customer Updated").show();
+                }else{
+                    new Alert(Alert.AlertType.WARNING, "Customer Not Updated").show();
+                }
+            } catch (Exception e) {
+                new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+                throw new RuntimeException(e);
+            }
         }
+
+
     }
 
     private void clearFields(){
@@ -120,5 +158,8 @@ public class CustomerFormController {
     }
 
     public void newCustomerOnAction(ActionEvent actionEvent) {
+        clearFields();
+        btnSave.setText("Save Customer");
+        txtId.setEditable(true);
     }
 }
