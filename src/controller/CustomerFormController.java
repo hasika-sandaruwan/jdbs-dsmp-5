@@ -11,6 +11,7 @@ import view.tm.CustomerTm;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class CustomerFormController {
     public TextField txtId;
@@ -58,6 +59,26 @@ public class CustomerFormController {
                     set.getDouble(4),
                     buttonBar
             );
+
+            deleteButton.setOnAction(e->{
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure?",
+                        ButtonType.YES, ButtonType.NO);
+                Optional<ButtonType> buttonType = alert.showAndWait();
+                if (buttonType.get() == ButtonType.YES) {
+                   try{
+                     boolean  isDeleted = CrudUtil.execute("DELETE FROM customer WHERE customer_id = ?", customer.getId());
+                     if(isDeleted){
+                         loadAllCustomers();
+                         new Alert(Alert.AlertType.INFORMATION,"Customer has been deleted").show();
+                     }else{
+                         new Alert(Alert.AlertType.WARNING,"Try Again").show();
+                     }
+                   } catch (SQLException | ClassNotFoundException ex) {
+                       throw new RuntimeException(ex);
+                   }
+                }
+            });
+
             tmObservableList.add(customer);
         }
         tblCustomers.setItems(tmObservableList);
